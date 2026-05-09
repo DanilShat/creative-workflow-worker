@@ -1,0 +1,23 @@
+# Live Browser Evidence Checklist
+
+- [ ] Server API starts on operator laptop.
+- [ ] Streamlit UI starts on operator laptop.
+- [ ] `server llm healthcheck` confirms Ollama and the configured model.
+- [ ] Worker token is generated for `designer-laptop-01`.
+- [ ] Worker registers with bearer token.
+- [ ] Worker heartbeats every 15 seconds.
+- [ ] Gemini profile status is `authenticated`.
+- [ ] Freepik profile status is `authenticated`.
+- [ ] Task is created in Streamlit with one reference upload.
+- [ ] Reference asset exists on disk and in `assets`.
+- [ ] Gemini job is claimed and completed by the worker.
+- [ ] Gemini debug raw text, screenshot, and step log are uploaded.
+- [ ] Prompt row exists in `prompts`.
+- [ ] Freepik job is created after Gemini completion.
+- [ ] Freepik job downloads a real generated file.
+- [ ] Generated file and debug artifacts are uploaded.
+- [ ] Workflow moves to `waiting_human_review`.
+- [ ] Worker returns to idle before human review.
+- [ ] Reject records a review and creates a new retry run/job.
+- [ ] A retryable worker failure creates a new queued attempt up to the retry policy limit.
+- [ ] Killing/stopping the worker during an active job lets `mark-orphans` mark the lease as orphaned.
