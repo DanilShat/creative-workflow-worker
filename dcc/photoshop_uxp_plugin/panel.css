@@ -1,0 +1,162 @@
+/* Designer-feel panel — matches Photoshop dark UI by default. Avoids
+   Adobe Spectrum dependencies so the plugin loads in Develop mode without
+   an extra runtime fetch. */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "adobe-clean", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  font-size: 13px;
+  color: #d8d8d8;
+  background: #1e1e1e;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 8px 10px 10px;
+  gap: 8px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #2e2e2e;
+}
+
+.panel-title {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.panel-status {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #2a2a2a;
+  color: #9a9a9a;
+}
+
+.panel-status[data-state="online"] {
+  background: #16361f;
+  color: #6ddc8a;
+}
+
+.panel-status[data-state="thinking"] {
+  background: #2a2a45;
+  color: #b8c2ff;
+}
+
+.panel-status[data-state="offline"] {
+  background: #3a1f1f;
+  color: #ff8a8a;
+}
+
+.panel-context {
+  font-size: 11px;
+  color: #888;
+}
+
+.context-value {
+  color: #c0c0c0;
+}
+
+.panel-log {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 4px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.log-empty {
+  color: #6a6a6a;
+  font-style: italic;
+  padding: 8px 4px;
+}
+
+.msg {
+  padding: 8px 10px;
+  border-radius: 8px;
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.msg-user {
+  align-self: flex-end;
+  background: #2d4a78;
+  color: #f0f4ff;
+}
+
+.msg-agent {
+  align-self: flex-start;
+  background: #2a2a2a;
+  color: #e0e0e0;
+}
+
+.msg-action {
+  align-self: flex-start;
+  background: #1f3a25;
+  color: #cfe9d3;
+  font-family: "Source Code Pro", Consolas, monospace;
+  font-size: 12px;
+}
+
+.msg-error {
+  align-self: flex-start;
+  background: #3a1f1f;
+  color: #ffb8b8;
+}
+
+.panel-input {
+  display: flex;
+  gap: 6px;
+  padding-top: 4px;
+  border-top: 1px solid #2e2e2e;
+}
+
+#message {
+  flex: 1 1 auto;
+  resize: none;
+  background: #2a2a2a;
+  color: #e8e8e8;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+#message:focus {
+  outline: none;
+  border-color: #5a7fc7;
+}
+
+#send {
+  background: #2d4a78;
+  color: #f0f4ff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#send:hover {
+  background: #3a5fa0;
+}
+
+#send:disabled {
+  background: #2a2a2a;
+  color: #6a6a6a;
+  cursor: not-allowed;
+}

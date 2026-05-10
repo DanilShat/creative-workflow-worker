@@ -10,4 +10,8 @@ WORKER_TOKEN=paste-generated-token-here
 WORKER_TEMP_ROOT=./runtime_data/temp
 PLAYWRIGHT_PROFILE_ROOT=./runtime_data/profiles
 WORKER_CAPABILITIES=browser.playwright,browser.gemini,browser.freepik
+# Optional Claude escalation for the local Photoshop/agent gateway.
+# ANTHROPIC_API_KEY=
+# CLAUDE_SONNET_MODEL=claude-sonnet-4-20250514
+# CLAUDE_OPUS_MODEL=claude-opus-4-1-20250805
 ```

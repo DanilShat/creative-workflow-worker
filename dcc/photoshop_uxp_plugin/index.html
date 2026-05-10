@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Creative Workflow Assistant</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <div class="panel">
+      <header class="panel-header">
+        <div class="panel-title">Creative Workflow</div>
+        <div class="panel-status" id="status-pill">connecting…</div>
+      </header>
+
+      <div class="panel-context" id="doc-context">
+        <span class="context-label">Doc:</span>
+        <span class="context-value" id="doc-name">no document open</span>
+      </div>
+
+      <main class="panel-log" id="log" aria-live="polite">
+        <div class="log-empty">
+          Ask for a small tweak — "crop tighter on the right",
+          "darken the sky a touch". The assistant works on the active
+          document.
+        </div>
+      </main>
+
+      <form class="panel-input" id="composer">
+        <textarea
+          id="message"
+          rows="2"
+          placeholder="Ask for a tweak…"
+          aria-label="Message the assistant"
+        ></textarea>
+        <button type="submit" id="send">Send</button>
+      </form>
+    </div>
+
+    <script src="panel.js"></script>
+  </body>
+</html>

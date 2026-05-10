@@ -1,0 +1,58 @@
+{
+  "$schema": "https://developer.adobe.com/photoshop/uxp/2022/uxp_manifest-1.0.json",
+  "id": "com.creative_workflow.assistant",
+  "name": "Creative Workflow Assistant",
+  "version": "0.1.0",
+  "main": "index.html",
+  "manifestVersion": 5,
+  "host": [
+    {
+      "app": "PS",
+      "minVersion": "24.0.0"
+    }
+  ],
+  "entrypoints": [
+    {
+      "type": "panel",
+      "id": "creative-workflow-panel",
+      "label": {
+        "default": "Creative Workflow"
+      },
+      "minimumSize": {
+        "width": 320,
+        "height": 480
+      },
+      "preferredDockedSize": {
+        "width": 360,
+        "height": 640
+      }
+    }
+  ],
+  "icons": [
+    {
+      "width": 23,
+      "height": 23,
+      "path": "icons/icon-light.png",
+      "scale": [1, 2],
+      "theme": ["lightest", "light", "medium"],
+      "species": ["pluginList"]
+    },
+    {
+      "width": 23,
+      "height": 23,
+      "path": "icons/icon-dark.png",
+      "scale": [1, 2],
+      "theme": ["dark", "darkest"],
+      "species": ["pluginList"]
+    }
+  ],
+  "requiredPermissions": {
+    "network": {
+      "domains": [
+        "http://localhost:8765",
+        "http://127.0.0.1:8765"
+      ]
+    },
+    "localFileSystem": "request"
+  }
+}

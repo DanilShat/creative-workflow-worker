@@ -4,7 +4,7 @@
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-pet%20project-orange)
 
-> **Status:** pet project, actively developed, not production. Gate A — the Gemini → Freepik browser flow — is the first slice; Photoshop and After Effects bridges are scaffolded but not live yet.
+> **Status:** pet project, actively developed, not production. Gate A is the Gemini to Freepik browser slice. Gate B adds Claude-facing MCP tools, a local Photoshop panel gateway, and an After Effects `aerender` bridge that still requires real Adobe software on the designer laptop.
 
 **Creative Workflow** is a small automation system for design agencies that work through web tools — Gemini, Freepik, Kling — instead of paid APIs. You describe a brief once; the system queues up every variation, runs the browser clicks for you across your existing accounts, and drops the results into a single dashboard you can review. One "operator" laptop runs the brain and the UI. Each designer's laptop runs a "worker" that drives their own browser sessions, so your subscriptions, cookies, and account history stay where they belong. It's a pet project, not a SaaS — built to remove the most repetitive parts of a real creative workflow without replacing the designer's judgement.
 
@@ -21,6 +21,9 @@ creative-workflow-worker         ── runs on each designer's laptop    ──
 
 If you're a designer joining an existing setup, start here. If you're the one setting up the dashboard, start with [`creative-workflow-operator`](https://github.com/DanilShat/creative-workflow-operator) instead. The docs library is read-only reference material — you don't need it to run anything.
 
+For the Claude/browser-assisted/Photoshop/After Effects layer, start
+with [`AGENT_MANIFEST.md`](AGENT_MANIFEST.md).
+
 ## What it does on your laptop
 
 - Opens *your* Chrome profile, signed into *your* Gemini and Freepik accounts — nothing is shared, nothing is uploaded to a third-party service.
@@ -32,7 +35,7 @@ If you're a designer joining an existing setup, start here. If you're the one se
 
 A designer at a small creative agency or a solo designer who already pays for Gemini, Freepik, or Kling subscriptions and finds themselves doing the same prompt-and-download dance dozens of times per project.
 
-**Not for:** anyone looking for a managed SaaS, a Photoshop plugin, or an API-first generation pipeline. This worker runs on Windows laptops you already own, against accounts you already have.
+**Not for:** anyone looking for a managed SaaS or an API-first generation pipeline. This worker runs on Windows laptops you already own, against accounts and desktop tools you already have.
 
 ## Screenshots
 
@@ -104,4 +107,4 @@ Real worker tokens, browser profiles, temporary files and cookies stay local and
 
 ## What's next
 
-Gate B brings After Effects motion-design jobs into the same queue. Gate C adds a lightweight reviewer flow so a creative director can approve or reject variants from their phone. Issues and ideas welcome — this is a personal project, so PRs are reviewed case-by-case.
+Next work is to harden the Gate B desktop bridges with real Photoshop/After Effects validation, package the UXP panel for easier install, and add Gate C's lightweight reviewer flow so a creative director can approve or reject variants from their phone. Issues and ideas welcome - this is a personal project, so PRs are reviewed case-by-case.
