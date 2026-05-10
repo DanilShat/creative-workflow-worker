@@ -1,4 +1,5 @@
 param(
+    [string]$WorkerRoot = "",
     [switch]$Apply,
     [switch]$KeepGeminiProfile,
     [switch]$KeepFreepikProfile,
@@ -7,7 +8,9 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$WorkerRoot = "C:\creative-workflow-worker"
+if (-not $WorkerRoot) {
+    $WorkerRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+}
 $targets = @()
 
 function Set-EnvValue {
@@ -49,14 +52,14 @@ function Add-WorkerTarget {
 }
 
 if (-not $KeepFreepikProfile) {
-    Add-WorkerTarget "$WorkerRoot\profiles\freepik"
+    Add-WorkerTarget (Join-Path $WorkerRoot "runtime_data\profiles\freepik")
 }
 if (-not $KeepGeminiProfile) {
-    Add-WorkerTarget "$WorkerRoot\profiles\gemini"
+    Add-WorkerTarget (Join-Path $WorkerRoot "runtime_data\profiles\gemini")
 }
-Add-WorkerTarget "$WorkerRoot\profiles\profile_status.json"
-Add-WorkerTarget "$WorkerRoot\temp"
-Add-WorkerTarget "$WorkerRoot\manual_drop"
+Add-WorkerTarget (Join-Path $WorkerRoot "runtime_data\profiles\profile_status.json")
+Add-WorkerTarget (Join-Path $WorkerRoot "runtime_data\temp")
+Add-WorkerTarget (Join-Path $WorkerRoot "runtime_data\manual_drop")
 
 if ($RemovePlaywrightBrowserCache) {
     $playwrightCache = Join-Path $env:LOCALAPPDATA "ms-playwright"
@@ -93,7 +96,7 @@ foreach ($target in $targets) {
 
 $envPath = Join-Path (Get-Location) ".env.worker"
 if (-not (Test-Path $envPath)) {
-    $envPath = "$WorkerRoot\app\.env.worker"
+    $envPath = Join-Path $WorkerRoot ".env.worker"
 }
 if (Test-Path $envPath) {
     Set-EnvValue $envPath "PLAYWRIGHT_BROWSER_CHANNEL" "chrome"

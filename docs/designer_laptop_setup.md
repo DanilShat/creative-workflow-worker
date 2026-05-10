@@ -5,11 +5,14 @@ Clone this repo on the designer laptop:
 ## Setup
 
 ```powershell
-cd C:\
-git clone https://github.com/DanilShat/creative-workflow-worker.git C:\creative-workflow-worker\app
-cd C:\creative-workflow-worker\app
+git clone https://github.com/DanilShat/creative-workflow-worker.git <repo-root>
+cd <repo-root>
 powershell -ExecutionPolicy Bypass -File .\scripts\setup_designer_one_click.ps1
 ```
+
+Recommended path on the designer laptop is `C:\creative-workflow-worker\app`
+because older runbooks and shortcuts used that convention, but the scripts now
+resolve paths relative to the repo root.
 
 The setup script installs Python dependencies, installs Playwright Chromium,
 checks `.env.worker`, checks server reachability, then opens Gemini and Freepik
@@ -46,20 +49,20 @@ automation over the already trusted browser session.
 The old profile clone script is kept only as an experimental diagnostic:
 
 ```powershell
-cd C:\creative-workflow-worker\app
+cd <repo-root>
 powershell -ExecutionPolicy Bypass -File .\scripts\clone_chrome_profile_for_worker.ps1 -ProfileDirectory Default
 ```
 
 Clean experimental copied profiles with:
 
 ```powershell
-cd C:\creative-workflow-worker\app
+cd <repo-root>
 powershell -ExecutionPolicy Bypass -File .\scripts\cleanup_designer_experimental_profiles.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\cleanup_designer_experimental_profiles.ps1 -Apply
 ```
 
 The cleanup script deletes only worker-owned copies under
-`C:\creative-workflow-worker` unless the optional Playwright cache switch is
+the repo-local `runtime_data` folder unless the optional Playwright cache switch is
 explicitly provided. It does not touch the real Chrome profile in AppData.
 
 ## Run worker

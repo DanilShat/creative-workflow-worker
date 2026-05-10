@@ -19,12 +19,13 @@ from creative_workflow.worker.config import WorkerSettings
 
 
 class PollingClient:
-    def __init__(self, settings: WorkerSettings):
+    def __init__(self, settings: WorkerSettings, transport: httpx.BaseTransport | None = None):
         self.settings = settings
         self.client = httpx.Client(
             base_url=settings.server_base_url,
             timeout=60,
             headers={"Authorization": f"Bearer {settings.worker_token}"},
+            transport=transport,
         )
 
     def register(self, payload: WorkerRegisterRequest) -> WorkerRegisterResponse:

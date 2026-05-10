@@ -1,11 +1,15 @@
 param(
-    [string]$AppRoot = "C:\creative-workflow-worker\app",
+    [string]$AppRoot = "",
     [string]$Branch = "main",
     [switch]$SkipInstall,
     [switch]$SkipPlaywrightInstall
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $AppRoot) {
+    $AppRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+}
 
 if (-not (Test-Path (Join-Path $AppRoot ".git"))) {
     throw "No git checkout found at $AppRoot. Run scripts\switch_designer_to_git.ps1 first."

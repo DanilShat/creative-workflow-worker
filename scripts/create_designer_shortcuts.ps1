@@ -1,9 +1,13 @@
 param(
-    [string]$AppRoot = "C:\creative-workflow-worker\app",
+    [string]$AppRoot = "",
     [string]$UiUrl = "http://192.168.1.124:8501"
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $AppRoot) {
+    $AppRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+}
 
 $desktop = [Environment]::GetFolderPath("Desktop")
 $shell = New-Object -ComObject WScript.Shell

@@ -1,12 +1,17 @@
 param(
     [string]$SourceUserDataDir = "$env:LOCALAPPDATA\Google\Chrome\User Data",
     [string]$ProfileDirectory = "Default",
-    [string]$TargetProfileRoot = "C:\creative-workflow-worker\profiles",
+    [string]$TargetProfileRoot = "",
     [string[]]$Services = @("gemini", "freepik"),
     [switch]$StopChrome
 )
 
 $ErrorActionPreference = "Stop"
+
+$RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+if (-not $TargetProfileRoot) {
+    $TargetProfileRoot = Join-Path $RepoRoot "runtime_data\profiles"
+}
 
 function Invoke-RobocopyChecked {
     param(
@@ -79,7 +84,7 @@ foreach ($service in $Services) {
     }
 }
 
-$envPath = Join-Path (Get-Location) ".env.worker"
+$envPath = Join-Path $RepoRoot ".env.worker"
 if (Test-Path $envPath) {
     $lines = Get-Content $envPath
     if ($lines -match "^PLAYWRIGHT_BROWSER_CHANNEL=") {
