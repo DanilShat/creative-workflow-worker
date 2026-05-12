@@ -14,7 +14,7 @@ from creative_workflow.worker.runtime.coordinator import WorkerCoordinator
 app = typer.Typer(help="Designer worker commands.")
 profile_app = typer.Typer(help="Browser profile commands.")
 config_app = typer.Typer(help="Configuration commands.")
-agent_app = typer.Typer(help="Local Ollama, Claude Code, and Codex CLI checks.")
+agent_app = typer.Typer(help="Local Claude Code and Codex CLI checks.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(config_app, name="config")
 app.add_typer(agent_app, name="agent")

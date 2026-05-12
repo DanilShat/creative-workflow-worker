@@ -46,7 +46,7 @@ Invoke-Step "Check worker configuration" {
 }
 
 Invoke-Step "Check local agent subscriptions" {
-    Write-Host "This check does not use API keys. It only reports whether Ollama, Claude Code CLI, and Codex CLI are installed and logged in."
+    Write-Host "This check does not use API keys. It only reports whether Claude Code CLI and Codex CLI are installed and logged in."
     python -m creative_workflow.worker.cli agent status
 }
 

@@ -63,6 +63,12 @@ def test_agent_chat_job_executor_returns_worker_completion_outputs(tmp_path) -> 
     assert outputs["agent_chat"]["text"] == "open the browser and inspect it"
 
 
+def test_default_worker_backends_do_not_include_operator_ollama() -> None:
+    from creative_workflow.worker.agent_runtime.job_executor import _default_backends
+
+    assert {backend.name for backend in _default_backends()} == {"claude_cli", "codex_cli"}
+
+
 def test_agent_chat_job_executor_maps_runtime_failure_to_worker_failure(tmp_path) -> None:
     runtime = FakeRuntime(RuntimeError("Codex CLI is installed but not logged in."))
     executor = AgentChatJobExecutor(_settings(tmp_path), runtime=runtime)

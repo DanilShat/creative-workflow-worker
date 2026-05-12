@@ -7,7 +7,7 @@ from typing import Any
 
 from creative_workflow.shared.contracts.workers import JobForWorker
 from creative_workflow.shared.enums import FailureType
-from creative_workflow.worker.agent_runtime.backends import CliAgentBackend, LocalOllamaBackend
+from creative_workflow.worker.agent_runtime.backends import CliAgentBackend
 from creative_workflow.worker.agent_runtime.router import AgentRuntime, AgentRuntimeError
 from creative_workflow.worker.agent_runtime.schemas import AgentBackend, AgentChatRequest, AgentName
 from creative_workflow.worker.browser.flows.base import BrowserFlowError
@@ -19,7 +19,7 @@ AGENT_CHAT_CAPABILITY = "agent.chat"
 
 
 class AgentChatJobExecutor:
-    """Run a worker job through local Ollama, Claude Code CLI, or Codex CLI."""
+    """Run a worker job through Claude Code CLI or Codex CLI."""
 
     def __init__(self, settings: WorkerSettings, runtime: AgentRuntime | None = None) -> None:
         self.settings = settings
@@ -59,7 +59,6 @@ def _default_backends() -> list[AgentBackend]:
     """
 
     return [
-        LocalOllamaBackend(),
         CliAgentBackend(
             name="claude_cli",
             executable=os.getenv("CLAUDE_CLI_EXECUTABLE", "claude"),

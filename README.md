@@ -4,7 +4,7 @@
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-pet%20project-orange)
 
-> **Status:** pet project, actively developed, not production. Gate A is the Gemini to Freepik browser slice. Gate B adds local agent chat through Ollama, Claude Code CLI, and Codex CLI, plus desktop bridge contracts for Photoshop and After Effects.
+> **Status:** pet project, actively developed, not production. Gate A is the Gemini to Freepik browser slice. Gate B adds agent chat through operator-local Ollama plus worker-local Claude Code CLI and Codex CLI, then desktop bridge contracts for Photoshop and After Effects.
 
 **Creative Workflow** is a small automation system for design agencies that work through web tools — Gemini, Freepik, Kling — instead of paid APIs. You describe a brief once; the system queues up every variation, runs the browser clicks for you across your existing accounts, and drops the results into a single dashboard you can review. One "operator" laptop runs the brain and the UI. Each designer's laptop runs a "worker" that drives their own browser sessions, so your subscriptions, cookies, and account history stay where they belong. It's a pet project, not a SaaS — built to remove the most repetitive parts of a real creative workflow without replacing the designer's judgement.
 
@@ -27,7 +27,7 @@ with [`AGENT_MANIFEST.md`](AGENT_MANIFEST.md).
 ## What it does on your laptop
 
 - Opens *your* Chrome profile, signed into *your* Gemini and Freepik accounts — nothing is shared, nothing is uploaded to a third-party service.
-- Runs local agent help through Ollama, Claude Code CLI, or Codex CLI using your installed subscription accounts, not API keys.
+- Runs escalated agent help through Claude Code CLI or Codex CLI using your installed subscription accounts, not API keys.
 - Watches a queue from the operator and runs the click-through work for you while you do something else (or sleep).
 - Uploads finished assets back to the operator dashboard automatically — no manual copy-paste, no Drive folders to babysit.
 - Stops the moment you touch the keyboard. You stay in control of the browser any time you want it back.
@@ -61,7 +61,7 @@ How the worker connects to the operator and the creative tools, exported from **
 - Python 3.11+
 - Chrome installed (Playwright will manage its own copy too)
 - A worker token from your operator
-- Optional for agent chat: Ollama, Claude Code CLI login, and Codex CLI login on this laptop
+- Optional for escalated agent chat: Claude Code CLI login and Codex CLI login on this laptop. Ollama runs on the operator laptop.
 
 ## Quick Start
 
@@ -101,7 +101,6 @@ python -m creative_workflow.worker.cli run
 Agent setup is intentionally local:
 
 ```powershell
-ollama --version
 claude --version
 claude auth status
 codex --version

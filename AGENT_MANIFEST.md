@@ -17,7 +17,7 @@ The worker repo owns designer-laptop execution:
 - Playwright browser flows
 - artifact download/upload
 - local browser/DCC capability reporting
-- local Ollama, Claude Code CLI, Codex CLI, MCP server, and DCC bridges
+- local Claude Code CLI, Codex CLI, MCP server, and DCC bridges
 
 Claude can help operate local tools, but execution results still flow through
 the worker protocol.
@@ -34,7 +34,7 @@ the worker protocol.
    - `submit_aftereffects_render`
 4. Local Photoshop agent gateway:
    - FastAPI `/health` and `/chat`
-   - Ollama-first routing
+   - operator Ollama for routine chat
    - Claude Code/Codex escalation through local subscription CLIs
    - typed action allowlist
 5. Photoshop UXP panel skeleton.
@@ -102,11 +102,11 @@ Adobe apps.
   module naming.
 
 ### 2026-05-12 - Codex
-- Context: Added worker-local agent runtime for `local_ollama`, `claude_cli`,
-  and `codex_cli`, plus `designer_agent_chat` job execution.
-- Decision: Subscription CLI login is the boundary. The worker probes local
-  installs and login state, then routes routine requests to Ollama and
-  browser/creative requests to the least-used available CLI agent.
+- Context: Added worker-local agent runtime for `claude_cli` and `codex_cli`,
+  plus `designer_agent_chat` job execution.
+- Decision: Subscription CLI login is the worker boundary. Operator-local
+  Ollama handles routine chat; browser/creative requests become worker jobs and
+  route to the least-used available CLI agent.
 - Files changed: agent runtime modules, worker coordinator, CLI status command,
   setup script, README, `.env.worker.example`.
 - Tests run: targeted worker unit and integration tests.

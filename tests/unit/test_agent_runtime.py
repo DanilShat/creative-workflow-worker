@@ -35,23 +35,18 @@ class FakeBackend:
         )
 
 
-def test_agent_runtime_prefers_local_ollama_for_routine_requests(tmp_path: Path) -> None:
-    ollama = FakeBackend(
-        AgentBackendStatus(name="local_ollama", available=True, installed=True, logged_in=True),
-        reply="local answer",
-    )
+def test_agent_runtime_routes_to_cli_when_worker_receives_escalation(tmp_path: Path) -> None:
     claude = FakeBackend(
         AgentBackendStatus(name="claude_cli", available=True, installed=True, logged_in=True),
         reply="claude answer",
     )
-    runtime = AgentRuntime([ollama, claude], usage_path=tmp_path / "usage.json")
+    runtime = AgentRuntime([claude], usage_path=tmp_path / "usage.json")
 
-    result = runtime.chat(AgentChatRequest(message="summarize this task status"))
+    result = runtime.chat(AgentChatRequest(message="inspect this browser task"))
 
-    assert result.routed_to == "local_ollama"
-    assert result.text == "local answer"
-    assert len(ollama.calls) == 1
-    assert claude.calls == []
+    assert result.routed_to == "claude_cli"
+    assert result.text == "claude answer"
+    assert len(claude.calls) == 1
 
 
 def test_agent_runtime_routes_browser_requests_to_least_used_cli_agent(tmp_path: Path) -> None:

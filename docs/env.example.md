@@ -12,8 +12,7 @@ PLAYWRIGHT_PROFILE_ROOT=./runtime_data/profiles
 WORKER_CAPABILITIES=browser.playwright,browser.gemini,browser.freepik,agent.chat
 
 # Local agent routing. These use subscription CLI logins on this laptop, not API keys.
-OLLAMA_BASE_URL=http://127.0.0.1:11434
-OLLAMA_MODEL=gemma3n:e2b
+# Ollama runs on the operator laptop, not on designer workers.
 CLAUDE_CLI_EXECUTABLE=claude
 CODEX_CLI_EXECUTABLE=codex
 CLAUDE_CLI_STATUS_ARGS=auth status
