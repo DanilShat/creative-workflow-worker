@@ -24,6 +24,7 @@ from creative_workflow.shared.contracts.workers import (
 from creative_workflow.shared.enums import FailureType, JobExecutionState, WorkerStatus
 from creative_workflow.shared.time import iso_now
 from creative_workflow.worker.assets.manager import WorkerAssetManager
+from creative_workflow.worker.agent_runtime.job_executor import AGENT_CHAT_ACTION, AGENT_CHAT_CAPABILITY, AgentChatJobExecutor
 from creative_workflow.worker.browser.flows import FLOW_CLASSES
 from creative_workflow.worker.browser.flows.base import BrowserFlowError
 from creative_workflow.worker.browser.profiles import ProfileManager
@@ -53,7 +54,7 @@ class WorkerCoordinator:
                 worker_id=self.settings.worker_id,
                 display_name=socket.gethostname(),
                 version=self.settings.version,
-                capabilities=self.settings.worker_capabilities,
+                capabilities=self._capabilities(),
                 host_apps={
                     "photoshop": {"installed": False, "connected": False, "version": None},
                     "aftereffects": {"installed": False, "connected": False, "version": None},
@@ -102,7 +103,7 @@ class WorkerCoordinator:
                         worker_id=self.settings.worker_id,
                         status=WorkerStatus.RUNNING if self.state.active_job_id else WorkerStatus.IDLE,
                         active_job_id=self.state.active_job_id,
-                        capabilities=self.settings.worker_capabilities,
+                        capabilities=self._capabilities(),
                         profile_status={service: status for service, status in self.profiles.list_profiles().items()},
                         host_app_status={"photoshop": "unavailable", "aftereffects": "unavailable"},
                         health={"temp_root": str(self.settings.worker_temp_root), "browser_runtime_ok": True},
@@ -116,7 +117,7 @@ class WorkerCoordinator:
         claim = self.client.claim_next(
             ClaimNextRequest(
                 worker_id=self.settings.worker_id,
-                capabilities=self.settings.worker_capabilities,
+                capabilities=self._capabilities(),
                 active_job_id=self.state.active_job_id,
             )
         )
@@ -141,6 +142,19 @@ class WorkerCoordinator:
         print(f"[worker] {job.job_id} executing {job.action_name}", flush=True)
         self._progress(job, JobExecutionState.EXECUTING, "execute_flow", f"Executing {job.action_name}")
         try:
+            if job.action_name == AGENT_CHAT_ACTION:
+                outputs = AgentChatJobExecutor(self.settings).run(job)
+                self._progress(job, JobExecutionState.UPLOADING_ARTIFACTS, "complete", "Reporting agent response")
+                self.client.complete(
+                    job.job_id,
+                    JobCompleteRequest(
+                        worker_id=self.settings.worker_id,
+                        outputs=outputs,
+                        artifact_ids=[],
+                        completed_at=iso_now(),
+                    ),
+                )
+                return
             flow_class = FLOW_CLASSES.get(job.action_name)
             if flow_class is None:
                 raise BrowserFlowError(FailureType.UNSUPPORTED_ACTION_NAME, f"Unsupported worker action {job.action_name}")
@@ -191,5 +205,8 @@ class WorkerCoordinator:
 
     def _save_state(self) -> None:
         self.state.worker_id = self.settings.worker_id
-        self.state.capabilities = self.settings.worker_capabilities
+        self.state.capabilities = self._capabilities()
         self.state_store.save(self.state)
+
+    def _capabilities(self) -> list[str]:
+        return list(dict.fromkeys([*self.settings.worker_capabilities, AGENT_CHAT_CAPABILITY]))

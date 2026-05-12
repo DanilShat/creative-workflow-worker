@@ -21,6 +21,7 @@ class TaskCreateResponse(BaseModel):
 class StartGateARequest(BaseModel):
     task_id: str
     operator_note: str | None = None
+    variant_count: int = Field(1, ge=1, le=20)
 
 
 class StartGateAResponse(BaseModel):
@@ -28,6 +29,19 @@ class StartGateAResponse(BaseModel):
     run_id: str
     workflow_state: str
     created_job_ids: list[str]
+
+
+class AgentChatCreateRequest(BaseModel):
+    message: str
+    task_id: str | None = None
+    preferred_agent: Literal["local_ollama", "claude_cli", "codex_cli"] | None = None
+
+
+class AgentChatCreateResponse(BaseModel):
+    task_id: str
+    run_id: str
+    job_id: str
+    workflow_state: str
 
 
 class TaskSummaryResponse(BaseModel):

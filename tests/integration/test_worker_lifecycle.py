@@ -116,3 +116,77 @@ def test_worker_protocol_lifecycle_with_mock_operator_api(tmp_path: Path):
         "/api/v1/workers/claim-next",
         "/api/v1/jobs/job_1/complete",
     ]
+
+
+def test_worker_protocol_can_complete_agent_chat_job(tmp_path: Path):
+    completed_payloads: list[dict] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        payload = json.loads(request.content.decode())
+        if request.url.path == "/api/v1/workers/register":
+            assert "agent.chat" in payload["capabilities"]
+            return httpx.Response(
+                200,
+                json={
+                    "worker_id": "designer-laptop-01",
+                    "registered": True,
+                    "server_time": iso_now(),
+                    "heartbeat_interval_s": 15,
+                    "claim_poll_interval_s": 3,
+                    "active_job": None,
+                },
+            )
+        if request.url.path == "/api/v1/workers/heartbeat":
+            return httpx.Response(200, json={"accepted": True, "server_time": iso_now(), "commands": []})
+        if request.url.path == "/api/v1/workers/claim-next":
+            assert "agent.chat" in payload["capabilities"]
+            return httpx.Response(
+                200,
+                json={
+                    "job": {
+                        "job_id": "job_agent_1",
+                        "task_id": "task_1",
+                        "run_id": "run_1",
+                        "job_type": JobType.AGENT_CHAT.value,
+                        "required_capability": "agent.chat",
+                        "action_name": "designer_agent_chat",
+                        "inputs": {"message": "summarize task status"},
+                        "input_assets": [],
+                        "timeout_s": 600,
+                        "lease_ttl_s": 90,
+                        "lease_expires_at": iso_now(),
+                        "idempotency_key": "job_agent_1:1",
+                    },
+                    "poll_after_s": 3,
+                },
+            )
+        if request.url.path == "/api/v1/jobs/job_agent_1/complete":
+            completed_payloads.append(payload)
+            return httpx.Response(200, json={"accepted": True, "server_workflow_state": "agent_replied"})
+        return httpx.Response(404, json={"error": request.url.path})
+
+    settings = WorkerSettings(
+        server_base_url="http://operator.test",
+        worker_id="designer-laptop-01",
+        worker_token="test-token",
+        worker_temp_root=tmp_path / "temp",
+        playwright_profile_root=tmp_path / "profiles",
+        playwright_browser_channel=None,
+        worker_capabilities=["agent.chat"],
+    )
+    client = PollingClient(settings, transport=httpx.MockTransport(handler))
+
+    client.register(WorkerRegisterRequest(worker_id=settings.worker_id, version=settings.version, capabilities=settings.worker_capabilities))
+    client.heartbeat(WorkerHeartbeatRequest(worker_id=settings.worker_id, status=WorkerStatus.IDLE, capabilities=settings.worker_capabilities))
+    claim = client.claim_next(ClaimNextRequest(worker_id=settings.worker_id, capabilities=settings.worker_capabilities))
+    assert claim.job is not None
+    client.complete(
+        claim.job.job_id,
+        JobCompleteRequest(
+            worker_id=settings.worker_id,
+            outputs={"agent_chat": {"routed_to": "local_ollama", "text": "No active blockers."}},
+            completed_at=iso_now(),
+        ),
+    )
+
+    assert completed_payloads[0]["outputs"]["agent_chat"]["routed_to"] == "local_ollama"

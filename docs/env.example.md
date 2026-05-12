@@ -9,9 +9,15 @@ WORKER_ID=designer-laptop-01
 WORKER_TOKEN=paste-generated-token-here
 WORKER_TEMP_ROOT=./runtime_data/temp
 PLAYWRIGHT_PROFILE_ROOT=./runtime_data/profiles
-WORKER_CAPABILITIES=browser.playwright,browser.gemini,browser.freepik
-# Optional Claude escalation for the local Photoshop/agent gateway.
-# ANTHROPIC_API_KEY=
-# CLAUDE_SONNET_MODEL=claude-sonnet-4-20250514
-# CLAUDE_OPUS_MODEL=claude-opus-4-1-20250805
+WORKER_CAPABILITIES=browser.playwright,browser.gemini,browser.freepik,agent.chat
+
+# Local agent routing. These use subscription CLI logins on this laptop, not API keys.
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=gemma3n:e2b
+CLAUDE_CLI_EXECUTABLE=claude
+CODEX_CLI_EXECUTABLE=codex
+CLAUDE_CLI_STATUS_ARGS=auth status
+CODEX_CLI_STATUS_ARGS=login status
+CLAUDE_CLI_CHAT_ARGS=--print --permission-mode dontAsk
+CODEX_CLI_CHAT_ARGS=exec --ask-for-approval never --sandbox read-only -
 ```

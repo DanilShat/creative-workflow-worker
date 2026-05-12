@@ -6,6 +6,7 @@ import socket
 import httpx
 import typer
 
+from creative_workflow.worker.agent_runtime.job_executor import _default_backends
 from creative_workflow.worker.browser.profiles import ProfileManager
 from creative_workflow.worker.config import WorkerSettings
 from creative_workflow.worker.runtime.coordinator import WorkerCoordinator
@@ -13,8 +14,10 @@ from creative_workflow.worker.runtime.coordinator import WorkerCoordinator
 app = typer.Typer(help="Designer worker commands.")
 profile_app = typer.Typer(help="Browser profile commands.")
 config_app = typer.Typer(help="Configuration commands.")
+agent_app = typer.Typer(help="Local Ollama, Claude Code, and Codex CLI checks.")
 app.add_typer(profile_app, name="profile")
 app.add_typer(config_app, name="config")
+app.add_typer(agent_app, name="agent")
 
 
 def _settings() -> WorkerSettings:
@@ -84,6 +87,19 @@ def profile_status(service: str | None = None):
 def profiles_list():
     for name, status in ProfileManager(_settings().playwright_profile_root).list_profiles().items():
         typer.echo(f"{name}: {status}")
+
+
+@agent_app.command("status")
+def agent_status():
+    """Show local agent readiness without requiring API keys."""
+
+    _settings()
+    for backend in _default_backends():
+        status = backend.probe()
+        state = "ready" if status.available else "unavailable"
+        detail = f" ({status.reason})" if status.reason else ""
+        version = f" version={status.version}" if status.version else ""
+        typer.echo(f"{status.name}: {state}; installed={status.installed}; logged_in={status.logged_in}{version}{detail}")
 
 
 if __name__ == "__main__":

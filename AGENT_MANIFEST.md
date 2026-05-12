@@ -17,7 +17,7 @@ The worker repo owns designer-laptop execution:
 - Playwright browser flows
 - artifact download/upload
 - local browser/DCC capability reporting
-- future local Claude MCP server and DCC bridges
+- local Ollama, Claude Code CLI, Codex CLI, MCP server, and DCC bridges
 
 Claude can help operate local tools, but execution results still flow through
 the worker protocol.
@@ -35,7 +35,7 @@ the worker protocol.
 4. Local Photoshop agent gateway:
    - FastAPI `/health` and `/chat`
    - Ollama-first routing
-   - Claude API escalation through `ANTHROPIC_API_KEY`
+   - Claude Code/Codex escalation through local subscription CLIs
    - typed action allowlist
 5. Photoshop UXP panel skeleton.
 6. After Effects `aerender.exe` bridge for named comp renders.
@@ -43,6 +43,7 @@ the worker protocol.
 Still not complete:
 
 - Claude-assisted visible-browser executor for already trusted browser sessions.
+- Live Codex CLI browser validation on the designer laptop after login.
 - Real Photoshop execution validation on a designer laptop with Photoshop installed.
 - Real After Effects validation with a sample `.aep` project and `AERENDER_EXE`.
 - Capability reporting that distinguishes configured bridges from installed code.
@@ -99,3 +100,15 @@ Adobe apps.
 - Tests run: worker pytest suite.
 - Open questions: exact sample `.aep` fixture and designer laptop AE output
   module naming.
+
+### 2026-05-12 - Codex
+- Context: Added worker-local agent runtime for `local_ollama`, `claude_cli`,
+  and `codex_cli`, plus `designer_agent_chat` job execution.
+- Decision: Subscription CLI login is the boundary. The worker probes local
+  installs and login state, then routes routine requests to Ollama and
+  browser/creative requests to the least-used available CLI agent.
+- Files changed: agent runtime modules, worker coordinator, CLI status command,
+  setup script, README, `.env.worker.example`.
+- Tests run: targeted worker unit and integration tests.
+- Open questions: verify the installed Claude Code and Codex CLI non-interactive
+  command flags on the actual designer laptop.

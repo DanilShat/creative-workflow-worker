@@ -47,7 +47,7 @@ class WorkerSettings:
                 item.strip()
                 for item in os.getenv(
                     "WORKER_CAPABILITIES",
-                    "browser.playwright,browser.gemini,browser.freepik",
+                    "browser.playwright,browser.gemini,browser.freepik,agent.chat",
                 ).split(",")
                 if item.strip()
             ],
