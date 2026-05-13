@@ -11,7 +11,7 @@ if (-not $AppRoot) {
 
 $desktop = [Environment]::GetFolderPath("Desktop")
 
-$launcherPath = Join-Path $desktop "Creative Workflow.cmd"
+$launcherPath = Join-Path $desktop "Creative Workflow Worker.cmd"
 $startScript = Join-Path $AppRoot "scripts\start_designer_app.ps1"
 if (-not (Test-Path $startScript)) {
     throw "Missing designer startup script: $startScript"
@@ -26,6 +26,7 @@ Set-Content -Path $launcherPath -Value @(
 ) -Encoding ASCII
 
 $oldShortcuts = @(
+    (Join-Path $desktop "Creative Workflow.cmd"),
     (Join-Path $desktop "Creative Workflow Worker.lnk"),
     (Join-Path $desktop "Creative Workflow UI.url")
 )
@@ -36,4 +37,4 @@ foreach ($path in $oldShortcuts) {
 }
 
 Write-Host "Created desktop launcher:" -ForegroundColor Green
-Write-Host "  Creative Workflow.cmd"
+Write-Host "  Creative Workflow Worker.cmd"
