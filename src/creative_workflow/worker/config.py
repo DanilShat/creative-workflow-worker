@@ -26,8 +26,11 @@ class WorkerSettings:
     worker_id: str
     worker_token: str
     worker_temp_root: Path
+    claude_cli_executable: str
+    codex_cli_executable: str
+    # Retained so coordinator.py ProfileManager construction doesn't break while
+    # that path is phased out. V2 browser flows do not use Playwright profiles.
     playwright_profile_root: Path
-    playwright_browser_channel: str | None
     worker_capabilities: list[str]
     version: str = "0.1.0"
 
@@ -41,13 +44,14 @@ class WorkerSettings:
             worker_id=os.getenv("WORKER_ID", "designer-laptop-01"),
             worker_token=os.getenv("WORKER_TOKEN", ""),
             worker_temp_root=Path(os.getenv("WORKER_TEMP_ROOT", "C:/creative-workflow-worker/temp")),
+            claude_cli_executable=os.getenv("CLAUDE_CLI_EXECUTABLE", "claude"),
+            codex_cli_executable=os.getenv("CODEX_CLI_EXECUTABLE", "codex"),
             playwright_profile_root=Path(os.getenv("PLAYWRIGHT_PROFILE_ROOT", "C:/creative-workflow-worker/profiles")),
-            playwright_browser_channel=os.getenv("PLAYWRIGHT_BROWSER_CHANNEL") or None,
             worker_capabilities=[
                 item.strip()
                 for item in os.getenv(
                     "WORKER_CAPABILITIES",
-                    "browser.playwright,browser.gemini,browser.freepik,agent.chat",
+                    "browser.desktop,browser.gemini,browser.freepik,agent.chat",
                 ).split(",")
                 if item.strip()
             ],
@@ -61,6 +65,4 @@ class WorkerSettings:
             errors.append("WORKER_ID is required.")
         if not self.server_base_url.startswith(("http://", "https://")):
             errors.append("SERVER_BASE_URL must be an HTTP URL.")
-        if self.playwright_browser_channel and self.playwright_browser_channel not in {"chrome", "msedge"}:
-            errors.append("PLAYWRIGHT_BROWSER_CHANNEL must be chrome or msedge when set.")
         return errors
