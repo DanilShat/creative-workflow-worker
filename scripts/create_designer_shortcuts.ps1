@@ -10,21 +10,30 @@ if (-not $AppRoot) {
 }
 
 $desktop = [Environment]::GetFolderPath("Desktop")
-$shell = New-Object -ComObject WScript.Shell
 
-$workerShortcut = $shell.CreateShortcut((Join-Path $desktop "Creative Workflow Worker.lnk"))
-$workerShortcut.TargetPath = "powershell.exe"
-$workerShortcut.Arguments = "-NoExit -ExecutionPolicy Bypass -Command `"cd '$AppRoot'; python -m creative_workflow.worker.cli run`""
-$workerShortcut.WorkingDirectory = $AppRoot
-$workerShortcut.Description = "Start the Creative Workflow designer worker"
-$workerShortcut.Save()
+$launcherPath = Join-Path $desktop "Creative Workflow.cmd"
+$startScript = Join-Path $AppRoot "scripts\start_designer_app.ps1"
+if (-not (Test-Path $startScript)) {
+    throw "Missing designer startup script: $startScript"
+}
 
-$uiShortcutPath = Join-Path $desktop "Creative Workflow UI.url"
-Set-Content -Path $uiShortcutPath -Value @(
-    "[InternetShortcut]",
-    "URL=$UiUrl"
+# Keep one obvious desktop entry point for designers. This launcher opens the
+# operator UI and then starts the authenticated worker loop in the same window.
+Set-Content -Path $launcherPath -Value @(
+    "@echo off",
+    "cd /d `"$AppRoot`"",
+    "powershell -NoProfile -ExecutionPolicy Bypass -NoExit -File `"$startScript`" -AppRoot `"$AppRoot`""
 ) -Encoding ASCII
 
-Write-Host "Created desktop shortcuts:" -ForegroundColor Green
-Write-Host "  Creative Workflow Worker.lnk"
-Write-Host "  Creative Workflow UI.url"
+$oldShortcuts = @(
+    (Join-Path $desktop "Creative Workflow Worker.lnk"),
+    (Join-Path $desktop "Creative Workflow UI.url")
+)
+foreach ($path in $oldShortcuts) {
+    if (Test-Path $path) {
+        Remove-Item -LiteralPath $path -Force
+    }
+}
+
+Write-Host "Created desktop launcher:" -ForegroundColor Green
+Write-Host "  Creative Workflow.cmd"

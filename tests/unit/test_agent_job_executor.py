@@ -26,8 +26,9 @@ def _settings(tmp_path) -> WorkerSettings:
         worker_id="designer-laptop-01",
         worker_token="token",
         worker_temp_root=tmp_path,
+        claude_cli_executable="claude",
+        codex_cli_executable="codex",
         playwright_profile_root=tmp_path / "profiles",
-        playwright_browser_channel=None,
         worker_capabilities=["agent.chat"],
     )
 

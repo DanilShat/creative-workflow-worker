@@ -71,8 +71,9 @@ def test_worker_protocol_lifecycle_with_mock_operator_api(tmp_path: Path):
         worker_id="designer-laptop-01",
         worker_token="test-token",
         worker_temp_root=tmp_path / "temp",
+        claude_cli_executable="claude",
+        codex_cli_executable="codex",
         playwright_profile_root=tmp_path / "profiles",
-        playwright_browser_channel=None,
         worker_capabilities=["browser.gemini"],
     )
     client = PollingClient(settings, transport=httpx.MockTransport(handler))
@@ -170,8 +171,9 @@ def test_worker_protocol_can_complete_agent_chat_job(tmp_path: Path):
         worker_id="designer-laptop-01",
         worker_token="test-token",
         worker_temp_root=tmp_path / "temp",
+        claude_cli_executable="claude",
+        codex_cli_executable="codex",
         playwright_profile_root=tmp_path / "profiles",
-        playwright_browser_channel=None,
         worker_capabilities=["agent.chat"],
     )
     client = PollingClient(settings, transport=httpx.MockTransport(handler))
