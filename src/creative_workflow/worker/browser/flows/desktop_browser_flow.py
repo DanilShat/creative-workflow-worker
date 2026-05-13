@@ -38,7 +38,6 @@ class DesktopBrowserFlow(BaseBrowserFlow):
             self._claude_exe(),
             "--chrome",
             "-p",
-            "--bare",
             "--model", "claude-haiku-4-5-20251001",
             "--output-format", "json",
             "--permission-mode", "bypassPermissions",
