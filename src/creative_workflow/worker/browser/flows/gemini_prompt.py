@@ -8,8 +8,28 @@ from creative_workflow.shared.enums import AssetClass, DebugKind, ProfileStatus,
 from creative_workflow.worker.browser.flows.base import FlowExecutionResult
 from creative_workflow.worker.browser.flows.desktop_browser_flow import DesktopBrowserFlow
 
-PHOTO_GEM_URL = "https://gemini.google.com/gem/5f69a5afc4b5"
+PHOTO_GEM_URL = "https://gemini.google.com/gem/4dd4618f8ae1"
 VIDEO_GEM_URL = "https://gemini.google.com/gem/21d5be0eae0a"
+
+# Known section markers that begin actual Gemini prompt content.
+# If Claude wraps the response with preamble, strip up to the first marker.
+_PROMPT_SECTION_MARKERS = ("SHOT:", "SCENE:", "PRODUCT:", "PROMPT:", "STYLE:", "LIGHTING:", "BACKGROUND:")
+
+
+def _strip_gemini_wrapper(text: str) -> str:
+    """Strip Claude wrapper preamble that may precede the actual Gemini prompt text."""
+    text = text.strip()
+    for marker in _PROMPT_SECTION_MARKERS:
+        if text.startswith(marker):
+            return text
+    earliest: int | None = None
+    for marker in _PROMPT_SECTION_MARKERS:
+        idx = text.find(marker)
+        if idx > 0 and (earliest is None or idx < earliest):
+            earliest = idx
+    if earliest is not None:
+        return text[earliest:]
+    return text
 
 
 class GeminiPromptFlow(DesktopBrowserFlow):
@@ -28,6 +48,9 @@ class GeminiPromptFlow(DesktopBrowserFlow):
             timeout_s=min(job.timeout_s, 240),
         )
         steps.append({"step": "result_received", "length": len(result_text)})
+
+        result_text = _strip_gemini_wrapper(result_text)
+        steps.append({"step": "wrapper_stripped", "length": len(result_text)})
 
         raw_text_path.parent.mkdir(parents=True, exist_ok=True)
         raw_text_path.write_text(result_text, encoding="utf-8")
@@ -68,12 +91,20 @@ class GeminiPromptFlow(DesktopBrowserFlow):
         brief = job.inputs.get("brief_text", "")
         note = job.inputs.get("operator_note") or ""
         refs = ", ".join(job.inputs.get("reference_asset_ids", []))
+        source_asset_id = job.inputs.get("source_asset_id")
+        packshot_note = ""
+        if source_asset_id:
+            packshot_note = (
+                f"\nThe source/product image (asset ID: {source_asset_id}) is the product packshot. "
+                "It must remain identifiable in all generated images — do not treat it as mood inspiration.\n"
+            )
         instruction = (
             "You are preparing a prompt for Freepik AI image generation. "
             "Return only the final prompt text, no markdown. "
             f"Brief: {brief}\n"
             f"Operator note: {note}\n"
             f"Reference asset ids: {refs}\n"
+            f"{packshot_note}"
             "The prompt should be specific, visual, production-ready, "
             "and suitable for a static product hero image."
         )
